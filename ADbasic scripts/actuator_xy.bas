@@ -33,9 +33,10 @@
 
 #INCLUDE .\data-acquisition.inc
 
-dim currentx, currenty as float at dm_local
+'No deberian ser long?
+'dim currentx, currenty as float at dm_local
 dim setpointx, setpointy as float at dm_local
-dim flag as long at dm_local
+'dim flag as long at dm_local
 dim time0, time1 as float at dm_local
 
 
@@ -53,21 +54,18 @@ EVENT:
  
   setpointx = fpar_40
   setpointy = fpar_41
-  
-  if (currentx > POSMAX) then currentx = POSMAX 'check that set x position is not higher than POSMAX
-  if (currentx < POSMIN) then currentx = POSMIN 'check that set x position is not lower than POSMIN
-  
-  if (currenty > POSMAX) then currenty = POSMAX 'check that set x position is not higher than POSMAX
-  if (currenty < POSMIN) then currenty = POSMIN 'check that set x position is not lower than POSMIN
 
-  currentx = setpointx
-  currenty = setpointy
+  if (setpointx > POSMAX) then setpointx = POSMAX 'check that set x position is not higher than POSMAX
+  if (setpointx < POSMIN) then setpointx = POSMIN 'check that set x position is not lower than POSMIN
   
-  DAC(1, currentx)
-  DAC(2, currenty)
+  if (setpointy > POSMAX) then setpointy = POSMAX 'check that set y position is not higher than POSMAX
+  if (setpointy < POSMIN) then setpointy = POSMIN 'check that set y position is not lower than POSMIN
   
-  fpar_70 = currentx
-  fpar_71 = currenty
+  DAC(1, setpointx)
+  DAC(2, setpointy)
+  
+  fpar_70 = setpointx
+  fpar_71 = setpointy
 
   par_40 = 0
     
