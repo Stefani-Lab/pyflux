@@ -1099,61 +1099,37 @@ class Backend(QtCore.QObject):
             dx = 0
             dy = 0
             dz = 0
-            # threshold = 3
-            # far_threshold = 12
-            # correct_factor = 0.6
-            
             threshold = 3
             z_threshold = 3
             far_threshold = 12
             correct_factor = 0.6
                         
             if np.abs(xmean) > threshold:
-                
                 dx = - (xmean)/1000 # conversion to µm
-                
-                if dx < far_threshold: #TODO: double check this conditions (do they work?)
-                    
+                if np.abs(dx) < far_threshold: #TODO: double check this conditions (do they work?)
                     dx = correct_factor * dx #TODO: double check this conditions (do they work?)
-    
-    #                print('dx', dx)
-                
+                    # print('dx', dx)
             if np.abs(ymean) > threshold:
-                            
                 dy = - (ymean)/1000 # conversion to µm
-                
-                if dy < far_threshold:
-                    
+                if np.abs(dy) < far_threshold:
                     dy = correct_factor * dy
-                
-    #                print('dy', dy)
+                    # print('dy', dy)
     
             if np.abs(self.z) > z_threshold:
-                            
                 dz = - (self.z)/1000 # conversion to µm
-                
-                if dz < far_threshold:
-                    
+                if np.abs(dz) < far_threshold:
                     dz = correct_factor * dz
-                
-    #                print('dy', dy)
-    
+                    # print('dz', dz)
         elif mode == 'PI':
-            
-            pass
-        
             dx = self.pi_x.update(xmean)
             dy = self.pi_y.update(ymean)
             dz = self.pi_z.update(self.z)
-        
         else:
-            
             print('Please choose a valid feedback mode')
             print('Feedback modes: ON/OFF, PI')
-    
-        if dx > security_thr or dy > security_thr or dz > 2 * security_thr:
-            
-            print(datetime.now(), '[xy_tracking] Correction movement larger than 200 nm, active correction turned OFF')
+
+        if abs(dx) > security_thr or abs(dy) > security_thr or abs(dz) > 2 * security_thr:
+            print(datetime.now(), f'[{__name__}] Correction movement larger than {int(security_thr*1000)} nm, active correction turned OFF')
             self.toggle_feedback(False)
             
         else:

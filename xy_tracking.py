@@ -895,35 +895,26 @@ class Backend(QtCore.QObject):
         threshold = 5
         far_threshold = 12
         correct_factor = 0.6
-        security_thr = 0.35 # in µm
-        
-        if np.abs(self.x) > threshold:
-            
-            if dx < far_threshold:
-                
-                dx = correct_factor * dx
-            
-            dx = - (self.x)/1000 # conversion to µm
+        security_thr = 0.35  # in µm
 
-#                print('dx', dx)
-            
-        if np.abs(self.y) > threshold:
-            
-            if dy < far_threshold:
-                
-                dy = correct_factor * dy
-            
-            dy = - (self.y)/1000 # conversion to µm
-            
-#                print('dy', dy)
-    
-        if dx > security_thr or dy > security_thr:
-            
-            print(datetime.now(), '[xy_tracking] Correction movement larger than 200 nm, active correction turned OFF')
+        abs_x = np.abs(self.x)
+        new_x = self.x
+        if abs_x > threshold:
+            if abs_x < far_threshold:
+                new_x *= correct_factor
+            dx = -new_x / 1000  # conversion to µm
+
+        abs_y = np.abs(self.y)
+        new_y = self.y
+        if abs_y > threshold:
+            if abs_y < far_threshold:
+                new_y *= correct_factor
+            dy = -new_y / 1000  # conversion to µm
+
+        if abs(dx) > security_thr or abs(dy) > security_thr:
+            print(datetime.now(), f'[xy_tracking] Correction movement larger than {int(security_thr*1000)} nm, active correction turned OFF')
             self.toggle_feedback(False)
-            
         else:
-            
             # compensate for the mismatch between camera/piezo system of reference
             
             theta = np.radians(-3.7)   # 86.3 (or 3.7) is the angle between camera and piezo (measured)
